@@ -286,52 +286,106 @@ function Navbar({ lang, setLang, openContact, t }) {
   const navLinks = lang === 'fr'
     ? [['Services','#services'],['Pourquoi nous','#why'],['Zone','#zone'],['Témoignages','#testi'],['FAQ','#faq'],['À propos','#about']]
     : [['Services','#services'],['Why Us','#why'],['Zone','#zone'],['Reviews','#testi'],['FAQ','#faq'],['About','#about']];
+
+  const navBg = scrolled || menuOpen ? 'rgba(245,240,232,0.98)' : 'transparent';
+  const langBtn = (mobile) => (
+    <button onClick={() => setLang(l => l==='fr'?'en':'fr')} style={{
+      background:'transparent', border:'1.5px solid var(--orange)', color:'var(--orange)',
+      borderRadius:50, padding: mobile ? '10px 18px' : '8px 14px',
+      fontWeight:700, fontSize: mobile ? 15 : 13,
+      cursor:'pointer', fontFamily:'var(--font)', transition:'all 0.2s', flexShrink:0,
+    }}
+      onMouseEnter={e=>{e.target.style.background='var(--orange)'; e.target.style.color='#fff';}}
+      onMouseLeave={e=>{e.target.style.background='transparent'; e.target.style.color='var(--orange)';}}>
+      {lang==='fr'?'EN':'FR'}
+    </button>
+  );
+
   return (
-    <nav style={{
-      position:'fixed', top:0, left:0, right:0, zIndex:100,
-      background: scrolled ? 'rgba(245,240,232,0.97)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      borderBottom: scrolled ? '1px solid rgba(0,0,0,0.07)' : 'none',
-      transition: 'all 0.3s ease',
-      padding: '0 clamp(16px, 5vw, 64px)',
-    }}>
-      <div style={{ maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', height:72 }}>
-        <Logo size={36} />
-        <div style={{ display:'flex', gap:28, alignItems:'center', fontSize:14, fontWeight:500 }} className="desktop-nav">
-          {navLinks.map(([label, href]) => (
-            <a key={href} href={href} style={{ color:'var(--dark)', textDecoration:'none', transition:'color 0.2s' }}
-              onMouseEnter={e=>e.target.style.color='var(--orange)'}
-              onMouseLeave={e=>e.target.style.color='var(--dark)'}>
-              {label}
+    <>
+      <nav style={{
+        position:'fixed', top:0, left:0, right:0, zIndex:100,
+        background: navBg,
+        backdropFilter: (scrolled || menuOpen) ? 'blur(12px)' : 'none',
+        borderBottom: (scrolled || menuOpen) ? '1px solid rgba(0,0,0,0.07)' : 'none',
+        transition: 'all 0.3s ease',
+        padding: '0 clamp(16px, 5vw, 64px)',
+      }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between', height:72 }}>
+          <Logo size={36} />
+
+          {/* Desktop nav links */}
+          <div style={{ display:'flex', gap:28, alignItems:'center', fontSize:14, fontWeight:500 }} className="desktop-nav">
+            {navLinks.map(([label, href]) => (
+              <a key={href} href={href} style={{ color:'var(--dark)', textDecoration:'none', transition:'color 0.2s' }}
+                onMouseEnter={e=>e.target.style.color='var(--orange)'}
+                onMouseLeave={e=>e.target.style.color='var(--dark)'}>
+                {label}
+              </a>
+            ))}
+          </div>
+
+          {/* Desktop right actions */}
+          <div style={{ display:'flex', alignItems:'center', gap:12 }} className="desktop-nav">
+            <a href="tel:8192723003" style={{ fontWeight:700, fontSize:15, color:'var(--dark)', textDecoration:'none', letterSpacing:0.3 }}>
+              {t.nav.phone}
             </a>
-          ))}
+            <button onClick={openContact} style={{
+              background:'var(--orange)', color:'#fff', border:'none', borderRadius:50,
+              padding:'10px 22px', fontWeight:700, fontSize:14, cursor:'pointer',
+              fontFamily:'var(--font)', transition:'transform 0.15s, background 0.2s', whiteSpace:'nowrap'
+            }}
+              onMouseEnter={e=>{e.target.style.background='var(--orange-dark)'; e.target.style.transform='scale(1.04)';}}
+              onMouseLeave={e=>{e.target.style.background='var(--orange)'; e.target.style.transform='scale(1)';}}>
+              {t.nav.cta}
+            </button>
+            {langBtn(false)}
+          </div>
+
+          {/* Mobile right: lang toggle + hamburger */}
+          <div className="mobile-nav-right" style={{ display:'none', alignItems:'center', gap:10 }}>
+            {langBtn(false)}
+            <button onClick={() => setMenuOpen(o => !o)} style={{
+              background:'none', border:'none', cursor:'pointer', padding:8,
+              display:'flex', flexDirection:'column', gap:5, justifyContent:'center',
+            }}>
+              <span style={{ display:'block', width:24, height:2.5, background:'var(--dark)', borderRadius:2, transition:'all 0.3s', transform: menuOpen ? 'rotate(45deg) translate(5px,5px)' : 'none' }}></span>
+              <span style={{ display:'block', width:24, height:2.5, background:'var(--dark)', borderRadius:2, opacity: menuOpen ? 0 : 1, transition:'opacity 0.2s' }}></span>
+              <span style={{ display:'block', width:24, height:2.5, background:'var(--dark)', borderRadius:2, transition:'all 0.3s', transform: menuOpen ? 'rotate(-45deg) translate(5px,-5px)' : 'none' }}></span>
+            </button>
+          </div>
         </div>
-        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-          <a href="tel:8192723003" style={{ fontWeight:700, fontSize:15, color:'var(--dark)', textDecoration:'none', letterSpacing:0.3 }}>
-            {t.nav.phone}
-          </a>
-          <button onClick={openContact} style={{
-            background:'var(--orange)', color:'#fff', border:'none', borderRadius:50,
-            padding:'10px 22px', fontWeight:700, fontSize:14, cursor:'pointer',
-            fontFamily:'var(--font)', transition:'transform 0.15s, background 0.2s',
-            whiteSpace:'nowrap'
-          }}
-            onMouseEnter={e=>{e.target.style.background='var(--orange-dark)'; e.target.style.transform='scale(1.04)';}}
-            onMouseLeave={e=>{e.target.style.background='var(--orange)'; e.target.style.transform='scale(1)';}}>
-            {t.nav.cta}
-          </button>
-          <button onClick={() => setLang(l => l==='fr'?'en':'fr')} style={{
-            background:'transparent', border:'1.5px solid var(--orange)', color:'var(--orange)',
-            borderRadius:50, padding:'8px 14px', fontWeight:700, fontSize:13,
-            cursor:'pointer', fontFamily:'var(--font)', transition:'all 0.2s',
-          }}
-            onMouseEnter={e=>{e.target.style.background='var(--orange)'; e.target.style.color='#fff';}}
-            onMouseLeave={e=>{e.target.style.background='transparent'; e.target.style.color='var(--orange)';}}>
-            {lang==='fr'?'EN':'FR'}
-          </button>
+      </nav>
+
+      {/* Mobile dropdown menu */}
+      <div style={{
+        position:'fixed', top:72, left:0, right:0, zIndex:99,
+        background:'rgba(245,240,232,0.98)', backdropFilter:'blur(12px)',
+        borderBottom:'1px solid rgba(0,0,0,0.08)',
+        maxHeight: menuOpen ? '100vh' : 0, overflow:'hidden',
+        transition:'max-height 0.35s ease',
+      }} className="mobile-menu">
+        <div style={{ padding:'12px 24px 24px', display:'flex', flexDirection:'column', gap:4 }}>
+          {navLinks.map(([label, href]) => (
+            <a key={href} href={href} onClick={() => setMenuOpen(false)} style={{
+              color:'var(--dark)', textDecoration:'none', fontWeight:600, fontSize:18,
+              padding:'12px 0', borderBottom:'1px solid rgba(0,0,0,0.06)',
+            }}>{label}</a>
+          ))}
+          <div style={{ marginTop:16, display:'flex', flexDirection:'column', gap:12 }}>
+            <a href="tel:8192723003" style={{
+              display:'flex', alignItems:'center', justifyContent:'center', gap:10,
+              background:'var(--dark)', color:'#fff', borderRadius:50,
+              padding:'14px', fontWeight:700, fontSize:17, textDecoration:'none',
+            }}>📞 819 272-3003</a>
+            <button onClick={() => { openContact(); setMenuOpen(false); }} style={{
+              background:'var(--orange)', color:'#fff', border:'none', borderRadius:50,
+              padding:'14px', fontWeight:800, fontSize:17, cursor:'pointer', fontFamily:'var(--font)',
+            }}>{t.nav.cta} →</button>
+          </div>
         </div>
       </div>
-    </nav>
+    </>
   );
 }
 
@@ -747,8 +801,8 @@ function Footer({ t, openContact }) {
     <footer style={{ background:'#111', color:'rgba(255,255,255,0.5)', padding:'60px clamp(16px,6vw,80px) 32px' }}>
       <div style={{ maxWidth:1200, margin:'0 auto' }}>
         {/* Top row */}
-        <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'space-between', alignItems:'flex-start', gap:40, marginBottom:48 }}>
-          <div style={{ maxWidth:280 }}>
+        <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', alignItems:'center', gap:40, marginBottom:48, textAlign:'center' }}>
+          <div style={{ maxWidth:280, textAlign:'center', margin:'0 auto' }}>
             <img src="assets/logo-blanc.png" alt="KREOR Junk Removal" style={{ height:52, width:'auto', display:'block', marginBottom:16 }}/>
             <p style={{ fontSize:14, lineHeight:1.7 }}>{t.footer.tagline}</p>
           </div>
@@ -759,9 +813,9 @@ function Footer({ t, openContact }) {
               {t.nav.cta}
             </button>
           </div>
-          <div>
+          <div style={{ textAlign:'center' }}>
             <div style={{ fontWeight:700, fontSize:13, letterSpacing:1.5, textTransform:'uppercase', color:'rgba(255,255,255,0.3)', marginBottom:16 }}>Légal</div>
-            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+            <div style={{ display:'flex', flexDirection:'column', gap:10, alignItems:'center' }}>
               {t.footer.policies.map((p, i) => (
                 <a key={i} href={p.href} style={{ color:'rgba(255,255,255,0.5)', fontSize:14, textDecoration:'none', transition:'color 0.2s' }}
                   onMouseEnter={e=>e.target.style.color='var(--orange)'}
@@ -773,7 +827,7 @@ function Footer({ t, openContact }) {
           </div>
         </div>
         {/* Bottom row */}
-        <div style={{ borderTop:'1px solid rgba(255,255,255,0.08)', paddingTop:24, display:'flex', flexWrap:'wrap', justifyContent:'space-between', gap:12, fontSize:13 }}>
+        <div style={{ borderTop:'1px solid rgba(255,255,255,0.08)', paddingTop:24, display:'flex', flexWrap:'wrap', justifyContent:'center', gap:12, fontSize:13, textAlign:'center' }}>
           <p>© 2026 KREOR Junk Removal. {t.footer.rights}</p>
           <p>Outaouais · Ottawa · Hull · Gatineau</p>
         </div>
@@ -1060,8 +1114,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 
 <style>
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .desktop-nav { display: none !important; }
+  .mobile-nav-right { display: flex !important; }
+  .mobile-menu { display: block !important; }
+}
+@media (min-width: 769px) {
+  .mobile-nav-right { display: none !important; }
+  .mobile-menu { display: none !important; }
 }
 </style>
 </body>
