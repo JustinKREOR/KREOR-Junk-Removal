@@ -305,9 +305,9 @@ function Navbar({ lang, setLang, openContact, t }) {
     <>
       <nav style={{
         position:'fixed', top:0, left:0, right:0, zIndex:100,
-        background: navBg,
-        backdropFilter: (scrolled || menuOpen) ? 'blur(12px)' : 'none',
-        borderBottom: (scrolled || menuOpen) ? '1px solid rgba(0,0,0,0.07)' : 'none',
+        background: 'rgba(245,240,232,0.98)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(0,0,0,0.07)',
         transition: 'all 0.3s ease',
         padding: '0 clamp(16px, 5vw, 64px)',
       }}>
