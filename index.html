@@ -863,11 +863,9 @@ function Footer({ t, openContact }) {
 // ─── CONTACT MODAL ────────────────────────────────────────────────────────────
 function ContactModal({ open, onClose, t }) {
   const [form, setForm] = useState({ name:'', email:'', phone:'', message:'' });
-  const [files, setFiles] = useState([]);
-  const [dragging, setDragging] = useState(false);
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const fileRef = useRef();
+  const fileRef = null;
 
   useEffect(() => {
     if (open) { document.body.style.overflow = 'hidden'; setSent(false); }
@@ -875,15 +873,6 @@ function ContactModal({ open, onClose, t }) {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  function handleDrop(e) {
-    e.preventDefault(); setDragging(false);
-    const dropped = Array.from(e.dataTransfer.files);
-    setFiles(f => [...f, ...dropped].slice(0,8));
-  }
-  function handleFiles(e) {
-    setFiles(f => [...f, ...Array.from(e.target.files)].slice(0,8));
-  }
-  function removeFile(i) { setFiles(f => f.filter((_,j)=>j!==i)); }
   async function submit(e) {
     e.preventDefault();
     setLoading(true);
@@ -893,7 +882,6 @@ function ContactModal({ open, onClose, t }) {
       data.append('email', form.email);
       data.append('phone', form.phone);
       data.append('message', form.message);
-      files.forEach(f => data.append('attachment', f));
       const res = await fetch('https://formspree.io/f/xykoglgd', {
         method: 'POST',
         body: data,
@@ -902,10 +890,18 @@ function ContactModal({ open, onClose, t }) {
       if (res.ok) {
         if (typeof window !== 'undefined' && window.fbq) { window.fbq('track', 'Lead'); }
         setSent(true);
+      } else {
+        let msg = 'Une erreur est survenue. Veuillez réessayer ou nous appeler au 819 272-3003.';
+        try {
+          const j = await res.json();
+          if (j && j.errors && j.errors.length) {
+            msg = j.errors.map(e => e.message).join('\n');
+          }
+        } catch(_) {}
+        alert(msg);
       }
-      else { alert('Une erreur est survenue. Veuillez réessayer ou nous appeler.'); }
     } catch(err) {
-      alert('Une erreur est survenue. Veuillez nous appeler au 819 272-3003.');
+      alert('Une erreur réseau est survenue. Veuillez nous appeler au 819 272-3003.');
     }
     setLoading(false);
   }
@@ -967,33 +963,6 @@ function ContactModal({ open, onClose, t }) {
             <textarea placeholder={t.contact.message} value={form.message} required
               onChange={e=>setForm(f=>({...f,message:e.target.value}))}
               style={{ ...inputStyle, width:'100%', minHeight:110, resize:'vertical', marginBottom:14 }}/>
-
-            {/* File upload */}
-            <div onDrop={handleDrop} onDragOver={e=>{e.preventDefault();setDragging(true);}} onDragLeave={()=>setDragging(false)}
-              onClick={()=>fileRef.current.click()}
-              style={{
-                border:`2px dashed ${dragging?'var(--orange)':'rgba(0,0,0,0.15)'}`,
-                borderRadius:14, padding:'22px 20px', cursor:'pointer', textAlign:'center', marginBottom:14,
-                background: dragging ? 'rgba(224,92,42,0.04)' : 'var(--cream)',
-                transition:'all 0.2s',
-              }}>
-              <div style={{ fontSize:26, marginBottom:6 }}>📎</div>
-              <div style={{ fontWeight:600, fontSize:14 }}>{t.contact.attach}</div>
-              <div style={{ color:'var(--gray)', fontSize:12, marginTop:4 }}>{t.contact.attachSub}</div>
-              <input ref={fileRef} type="file" multiple accept="image/*,.pdf,.doc,.docx"
-                style={{ display:'none' }} onChange={handleFiles}/>
-            </div>
-
-            {files.length > 0 && (
-              <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginBottom:14 }}>
-                {files.map((f,i) => (
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:6, background:'var(--cream2)', borderRadius:50, padding:'6px 14px', fontSize:12, fontWeight:500 }}>
-                    <span>📄</span> {f.name.length>20 ? f.name.slice(0,18)+'…' : f.name}
-                    <button type="button" onClick={()=>removeFile(i)} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--gray)', fontSize:14, lineHeight:1 }}>×</button>
-                  </div>
-                ))}
-              </div>
-            )}
 
             <button type="submit" disabled={loading} style={{
               width:'100%', background:'var(--orange)', color:'#fff', border:'none',
