@@ -80,13 +80,15 @@ const CONTENT = {
       title: "Notre travail",
       sub: "Résidentiel, commercial, construction — on s'occupe de tout.",
     },
+    urgency: "⏰ Appelle avant 14h → On passe aujourd'hui à Gatineau et Ottawa",
+    trust: ["⭐ 4.9/5 sur Google", "Assurés", "Local Outaouais", "Réponse en 60 minutes"],
     hero: {
       badge: "Soumission 100% gratuite",
       title1: "Débarrassez-vous",
       title2: "de tout",
       sub: "Rapide, propre, sans tracas. Disponible 7 jours sur 7 pour tous vos besoins en débarras.",
-      cta1: "Obtenir une soumission",
-      cta2: "Nous appeler",
+      cta1: "Obtenir ma soumission en 60 sec",
+      cta2: "📞 Appeler 819 272-3003",
       stat1: "Disponible", stat1b: "7j/7",
       stat2: "Soumission", stat2b: "Gratuite",
       stat3: "Réponse", stat3b: "Rapide",
@@ -153,6 +155,18 @@ const CONTENT = {
       send: "Envoyer ma demande",
       success: "Merci ! On vous contacte très bientôt.",
     },
+    beforeAfter: {
+      title: "Avant / Après",
+      sub: "De l'encombrement au néant. Résultats réels à Gatineau et Ottawa.",
+      before: "Avant",
+      after: "Après",
+      jobs: [
+        { type: "Garage résidentiel", loc: "Gatineau" },
+        { type: "Sous-sol complet", loc: "Ottawa" },
+        { type: "Débris de construction", loc: "Aylmer" },
+        { type: "Cour arrière", loc: "Hull" },
+      ]
+    },
     footer: { rights: "Tous droits réservés.", tagline: "Rapide. Propre. Sans tracas.",
       policies: [
         { label: "Politique de confidentialité", href: "politique-confidentialite.html" },
@@ -167,13 +181,15 @@ const CONTENT = {
       title: "Our Work",
       sub: "Residential, commercial, construction — we handle it all.",
     },
+    urgency: "⏰ Call before 2pm → We'll come today in Gatineau & Ottawa",
+    trust: ["⭐ 4.9/5 on Google", "Insured", "Local Outaouais", "60-min Response"],
     hero: {
       badge: "100% Free Estimate",
       title1: "Get rid of",
       title2: "everything",
       sub: "Fast, clean, hassle-free. Available 7 days a week for all your junk removal needs.",
-      cta1: "Get a Free Quote",
-      cta2: "Call Us",
+      cta1: "Get my quote in 60 sec",
+      cta2: "📞 Call 819 272-3003",
       stat1: "Available", stat1b: "7 days/wk",
       stat2: "Estimate", stat2b: "Always Free",
       stat3: "Fast", stat3b: "Response",
@@ -239,6 +255,18 @@ const CONTENT = {
       attach: "Add Photos or Files", attachSub: "Drag files here or click to browse",
       send: "Send My Request",
       success: "Thank you! We'll be in touch very soon.",
+    },
+    beforeAfter: {
+      title: "Before / After",
+      sub: "From clutter to nothing. Real results in Gatineau and Ottawa.",
+      before: "Before",
+      after: "After",
+      jobs: [
+        { type: "Residential Garage", loc: "Gatineau" },
+        { type: "Full Basement", loc: "Ottawa" },
+        { type: "Construction Debris", loc: "Aylmer" },
+        { type: "Backyard", loc: "Hull" },
+      ]
     },
     footer: { rights: "All rights reserved.", tagline: "Fast. Clean. Hassle-free.",
       policies: [
@@ -328,7 +356,7 @@ function Navbar({ lang, setLang, openContact, t }) {
   return (
     <>
       <nav style={{
-        position:'fixed', top:0, left:0, right:0, zIndex:100,
+        position:'fixed', top:URGENCY_BANNER_HEIGHT, left:0, right:0, zIndex:100,
         background: 'rgba(245,240,232,0.98)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(0,0,0,0.07)',
@@ -383,7 +411,7 @@ function Navbar({ lang, setLang, openContact, t }) {
 
       {/* Mobile dropdown menu */}
       <div style={{
-        position:'fixed', top:72, left:0, right:0, zIndex:99,
+        position:'fixed', top:72+URGENCY_BANNER_HEIGHT, left:0, right:0, zIndex:99,
         background:'rgba(245,240,232,0.98)', backdropFilter:'blur(12px)',
         borderBottom:'1px solid rgba(0,0,0,0.08)',
         maxHeight: menuOpen ? '100vh' : 0, overflow:'hidden',
@@ -410,6 +438,24 @@ function Navbar({ lang, setLang, openContact, t }) {
         </div>
       </div>
     </>
+  );
+}
+
+const URGENCY_BANNER_HEIGHT = 40;
+
+function UrgencyBanner({ text }) {
+  return (
+    <div style={{
+      position:'fixed', top:0, left:0, right:0, zIndex:101,
+      background:'linear-gradient(90deg, #d4a04b 0%, #c89538 50%, #d4a04b 100%)',
+      color:'#fff', padding:'10px 20px', textAlign:'center',
+      fontWeight:700, fontSize:14, letterSpacing:0.3,
+      boxShadow:'0 2px 8px rgba(0,0,0,0.12)',
+    }}>
+      <span style={{ display:'inline-flex', alignItems:'center', gap:8, flexWrap:'wrap', justifyContent:'center' }}>
+        {text}
+      </span>
+    </div>
   );
 }
 
@@ -446,7 +492,7 @@ function Hero({ openContact, t, tweaks }) {
     <section style={{
       minHeight: '100vh',
       display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center',
-      padding:'120px clamp(16px,6vw,80px) 80px',
+      padding:`${120+URGENCY_BANNER_HEIGHT}px clamp(16px,6vw,80px) 80px`,
       position:'relative', overflow:'hidden',
       background: '#111',
     }}>      
@@ -529,6 +575,23 @@ function Hero({ openContact, t, tweaks }) {
           {t.hero.sub}
         </p>
 
+        {/* Trust signals */}
+        <div style={{
+          display:'flex', flexWrap:'wrap', gap:'10px 18px', marginTop:22,
+          opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'all 0.7s ease 0.25s',
+        }}>
+          {t.trust.map((item, i) => (
+            <span key={i} style={{
+              display:'inline-flex', alignItems:'center', gap:6,
+              color:'rgba(255,255,255,0.92)', fontSize:14, fontWeight:600,
+              padding:'7px 14px', background:'rgba(255,255,255,0.08)',
+              border:'1px solid rgba(255,255,255,0.12)', borderRadius:50,
+              backdropFilter:'blur(8px)',
+            }}>{item}</span>
+          ))}
+        </div>
+
         {/* CTAs */}
         <div style={{
           display:'flex', gap:16, marginTop:40, flexWrap:'wrap',
@@ -554,7 +617,7 @@ function Hero({ openContact, t, tweaks }) {
           }}
             onMouseEnter={e=>e.currentTarget.style.transform='scale(1.04)'}
             onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>
-            📞 {t.hero.cta2}
+            {t.hero.cta2}
           </a>
         </div>
 
@@ -576,6 +639,76 @@ function Hero({ openContact, t, tweaks }) {
 }
 
 function clamp(val, min, max) { return Math.min(max, Math.max(min, val)); }
+
+function BeforeAfterCard({ job, beforeLabel, afterLabel, beforeImg, afterImg, delay }) {
+  const [pos, setPos] = useState(50);
+  const cardRef = useRef();
+  const drag = (clientX) => {
+    const r = cardRef.current.getBoundingClientRect();
+    const p = ((clientX - r.left) / r.width) * 100;
+    setPos(Math.max(0, Math.min(100, p)));
+  };
+  return (
+    <div className={`reveal reveal-delay-${(delay%4)+1}`} ref={cardRef}
+      onMouseMove={e => { if (e.buttons === 1) drag(e.clientX); }}
+      onTouchMove={e => drag(e.touches[0].clientX)}
+      style={{
+        position:'relative', borderRadius:18, overflow:'hidden',
+        aspectRatio:'4/3', background:'#222', cursor:'ew-resize',
+        boxShadow:'0 10px 40px rgba(0,0,0,0.18)',
+        userSelect:'none',
+      }}>
+      {/* After (full background) */}
+      <img src={afterImg} alt="after" draggable="false" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover' }}/>
+      {/* Before (clipped) */}
+      <div style={{ position:'absolute', inset:0, clipPath:`polygon(0 0, ${pos}% 0, ${pos}% 100%, 0 100%)`, transition:'clip-path 0.05s linear' }}>
+        <img src={beforeImg} alt="before" draggable="false" style={{ width:'100%', height:'100%', objectFit:'cover', filter:'brightness(0.85)' }}/>
+      </div>
+      {/* Labels */}
+      <div style={{ position:'absolute', top:14, left:14, background:'rgba(0,0,0,0.6)', color:'#fff', padding:'5px 12px', borderRadius:50, fontSize:11, fontWeight:700, letterSpacing:1, textTransform:'uppercase', backdropFilter:'blur(4px)' }}>{beforeLabel}</div>
+      <div style={{ position:'absolute', top:14, right:14, background:'var(--orange)', color:'#fff', padding:'5px 12px', borderRadius:50, fontSize:11, fontWeight:700, letterSpacing:1, textTransform:'uppercase' }}>{afterLabel}</div>
+      {/* Divider */}
+      <div style={{ position:'absolute', top:0, bottom:0, left:`${pos}%`, width:3, background:'#fff', transform:'translateX(-50%)', pointerEvents:'none', boxShadow:'0 0 12px rgba(0,0,0,0.4)' }}>
+        <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:36, height:36, borderRadius:'50%', background:'#fff', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 14px rgba(0,0,0,0.3)', color:'var(--orange)', fontWeight:900, fontSize:16 }}>⇔</div>
+      </div>
+      {/* Caption */}
+      <div style={{ position:'absolute', bottom:0, left:0, right:0, padding:'40px 18px 16px', background:'linear-gradient(to top, rgba(0,0,0,0.75), transparent)', color:'#fff', pointerEvents:'none' }}>
+        <div style={{ fontWeight:700, fontSize:15 }}>{job.type}</div>
+        <div style={{ fontSize:12, opacity:0.75, marginTop:2 }}>{job.loc}</div>
+      </div>
+    </div>
+  );
+}
+
+function BeforeAfter({ t }) {
+  useReveal();
+  // Pair hero photos as before/after placeholders (user will swap with real images)
+  const pairs = [
+    [HERO_PHOTOS[1], HERO_PHOTOS[0]],
+    [HERO_PHOTOS[2], HERO_PHOTOS[3]],
+    [HERO_PHOTOS[0], HERO_PHOTOS[2]],
+    [HERO_PHOTOS[3], HERO_PHOTOS[1]],
+  ];
+  return (
+    <section style={{ padding:'100px clamp(16px,6vw,80px)', background:'var(--cream)' }}>
+      <div style={{ maxWidth:1200, margin:'0 auto' }}>
+        <div className="reveal" style={{ textAlign:'center', marginBottom:48 }}>
+          <span style={{ color:'var(--orange)', fontWeight:700, fontSize:13, letterSpacing:2, textTransform:'uppercase' }}>Résultats</span>
+          <h2 style={{ fontSize:'clamp(32px,4vw,52px)', fontWeight:800, marginTop:8, letterSpacing:-1 }}>{t.beforeAfter.title}</h2>
+          <p style={{ color:'var(--gray)', fontSize:18, marginTop:12 }}>{t.beforeAfter.sub}</p>
+          <p style={{ color:'var(--orange)', fontSize:13, marginTop:8, fontWeight:600 }}>⇔ Glissez pour comparer</p>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))', gap:24 }}>
+          {t.beforeAfter.jobs.map((job, i) => (
+            <BeforeAfterCard key={i} job={job}
+              beforeLabel={t.beforeAfter.before} afterLabel={t.beforeAfter.after}
+              beforeImg={pairs[i][0]} afterImg={pairs[i][1]} delay={i}/>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function PhotoStrip({ t }) {
   useReveal();
@@ -873,6 +1006,13 @@ function ContactModal({ open, onClose, t }) {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
+  async function sha256(value) {
+    if (!value) return '';
+    const normalized = String(value).trim().toLowerCase();
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(normalized));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   async function submit(e) {
     e.preventDefault();
     setLoading(true);
@@ -888,7 +1028,28 @@ function ContactModal({ open, onClose, t }) {
         headers: { 'Accept': 'application/json' },
       });
       if (res.ok) {
-        if (typeof window !== 'undefined' && window.fbq) { window.fbq('track', 'Lead'); }
+        // Meta Pixel Advanced Matching (SHA-256 hashed for iOS attribution)
+        if (typeof window !== 'undefined' && window.fbq) {
+          try {
+            const parts = (form.name || '').trim().split(/\s+/);
+            const firstName = parts[0] || '';
+            const lastName = parts.slice(1).join(' ') || '';
+            const phoneDigits = (form.phone || '').replace(/\D/g, '');
+            const [em, ph, fn, ln] = await Promise.all([
+              sha256(form.email),
+              sha256(phoneDigits),
+              sha256(firstName),
+              sha256(lastName),
+            ]);
+            const am = {};
+            if (em) am.em = em;
+            if (ph) am.ph = ph;
+            if (fn) am.fn = fn;
+            if (ln) am.ln = ln;
+            window.fbq('init', '2292051218204049', am);
+          } catch(_) {}
+          window.fbq('track', 'Lead');
+        }
         setSent(true);
       } else {
         let msg = 'Une erreur est survenue. Veuillez réessayer ou nous appeler au 819 272-3003.';
@@ -1032,6 +1193,7 @@ function App() {
 
   return (
     <>
+      <UrgencyBanner text={t.urgency} />
       <Navbar lang={lang} setLang={setLang} openContact={() => setContactOpen(true)} t={t} />
       <Hero openContact={() => setContactOpen(true)} t={t} tweaks={tweaks} />
       <TickerBar text={t.ticker} />
